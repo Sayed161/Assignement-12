@@ -28,7 +28,7 @@ const Purchase = () => {
       try {
         if (!email) return;
         
-        const response = await axios.get(`http://localhost:5000/users?email=${email}`);
+        const response = await axios.get(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${email}`);
         setUser(response.data);
         setLoading(false);
       } catch (error) {
@@ -82,7 +82,7 @@ const Purchase = () => {
       }
       else{
         console.log("paymentMethod",paymentMethod);
-      const response = await axios.post('http://localhost:5000/create-payment-intent', {
+      const response = await axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/create-payment-intent', {
         paymentMethodId: paymentMethod.id,
         price: selectedPackage.price,
         coins: selectedPackage.coins,
@@ -90,7 +90,7 @@ const Purchase = () => {
         email: Quser.email,
         userId: user._id,
       });
-      const responseData = await axios.post('http://localhost:5000/checkout', {
+      const responseData = await axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/checkout', {
         paymentMethodId: paymentMethod.id,
         price: selectedPackage.price,
         coins: selectedPackage.coins,
@@ -101,7 +101,7 @@ const Purchase = () => {
       });
 
       if (response.data) {
-        await axios.patch(`http://localhost:5000/users?email=${email}`, {
+        await axios.patch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${email}`, {
           balance: selectedPackage.coins + user.balance
         });
         Swal.fire({

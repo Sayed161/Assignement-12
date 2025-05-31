@@ -68,7 +68,7 @@ export const router = createBrowserRouter([
         {
           path:"tasklist/:id",
           element:<TaskDetails/>,
-          loader: ({params}) => fetch(`http://localhost:5000/tasks/${params.id}`)
+          loader: ({params}) => fetch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks/${params.id}`)
         },
         {
           path:"submissions",

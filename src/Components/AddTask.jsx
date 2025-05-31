@@ -43,7 +43,7 @@ const AddTask = () => {
   useEffect(() => {
     if (Quser?.email) {
       axios
-        .get(`http://localhost:5000/users?email=${Quser.email}`)
+        .get(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${Quser.email}`)
         .then((res) => {
           const balance = res.data?.balance || 0;
           setUserBalance(balance);
@@ -100,12 +100,12 @@ const AddTask = () => {
       };
 
       // Create task and deduct balance
-      const response = await axios.post("http://localhost:5000/tasks", {
+      const response = await axios.post("https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks", {
         task: fullTaskData,
         userId: Quser.uid,
         amount: totalCost,
       });
-      await axios.patch(`http://localhost:5000/users?email=${Quser.email}`, {
+      await axios.patch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${Quser.email}`, {
         balance: userBalance - totalCost,
       });
       Swal.fire({

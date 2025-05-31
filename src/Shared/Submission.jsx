@@ -12,7 +12,7 @@ const Submission = () => {
     useEffect(() => {
         const fetchSubmissions = async () => {
             try {
-                const response = await fetch(`http://localhost:5000/submissions?worker_email=${Quser?.email}`, {
+                const response = await fetch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions?worker_email=${Quser?.email}`, {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                     }

@@ -75,11 +75,11 @@ const AuthProviders = ({ children }) => {
       if(currentUser?.email){
         
         const user = {email:currentUser?.email};
-        axios.post('http://localhost:5000/login',user,{withCredentials:true})
+        axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/login',user,{withCredentials:true})
       .then(res=>{res.data})
       }
       else{
-        axios.post('http://localhost:5000/logout',{},{withCredentials:true})
+        axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/logout',{},{withCredentials:true})
       .then(res=>{res.data})
       }
       setLoading(false);

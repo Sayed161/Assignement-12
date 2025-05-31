@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 const ListTasks = () => {
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/tasks');
+      const response = await axios.get('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks');
       return response.data;
     } catch (error) {
       throw new Error('Failed to fetch tasks');

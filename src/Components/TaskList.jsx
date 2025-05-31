@@ -10,7 +10,7 @@ const TaskList = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('http://localhost:5000/tasks');
+        const response = await fetch('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks');
         if (!response.ok) {
           throw new Error('Failed to fetch tasks');
         }

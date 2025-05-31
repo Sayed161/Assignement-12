@@ -27,7 +27,7 @@ const [user, setUser] = useState(null);
       try {
         if (!email) return;
         
-        const response = await axios.get(`http://localhost:5000/users?email=${email}`);
+        const response = await axios.get(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${email}`);
         setUser(response.data);
         setTotalCoins(response.data.balance);
         setLoading(false);
@@ -88,14 +88,14 @@ const handleWithdrawalSubmit = async (e) => {
       }
       else{
         console.log("paymentMethod",paymentMethod);
-      const response = await axios.post('http://localhost:5000/create-payment-intent', {
+      const response = await axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/create-payment-intent', {
         price: withdrawalData.withdrawAmount,
         email: Quser.email,
         userId: user._id,
       });
      
       if (response.data) {
-        await axios.patch(`http://localhost:5000/users?email=${email}`, {
+        await axios.patch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${email}`, {
           balance: user.balance-withdrawalData.coinToWithdraw 
         });
         Swal.fire({
@@ -110,7 +110,7 @@ const handleWithdrawalSubmit = async (e) => {
    
       // if (paymentIntent.status === "succeeded") {
       //   const withdrawalResponse = await fetch(
-      //     "http://localhost:5000/withdrawals",
+      //     "https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/withdrawals",
       //     {
       //       method: "POST",
       //       headers: {

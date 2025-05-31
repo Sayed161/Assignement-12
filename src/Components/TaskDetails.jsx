@@ -33,7 +33,7 @@ const TaskDetails = () => {
         };
 
         try {
-            const response = await axios.post('http://localhost:5000/submissions', {submissionData
+            const response = await axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions', {submissionData
             });
             
             const result = await response.data;

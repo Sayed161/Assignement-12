@@ -24,7 +24,7 @@ const DashBoardWorker = () => {
 
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:5000/submissions?worker_email=${Quser.email}`
+          `https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions?worker_email=${Quser.email}`
         );
 
   

@@ -11,7 +11,7 @@ const PaymentHistory = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/checkout?email=${email}`);
+        const response = await fetch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/checkout?email=${email}`);
         if (!response.ok) {
           throw new Error('Failed to fetch payment history');
         }

@@ -7,7 +7,7 @@ const BestWorkers = () => {
   useEffect(() => {
     const fetchTopWorkers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/users'); // Replace with your actual API endpoint
+        const response = await fetch('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users'); // Replace with your actual API endpoint
         const data = await response.json();
 
         // Sort by balance descending and pick top 6

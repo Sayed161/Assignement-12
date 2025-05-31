@@ -33,7 +33,7 @@ const SignUp = () => {
         ...rest,
         balance: balance,
       };
-      fetch('http://localhost:5000/users', {
+      fetch('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -21,7 +21,7 @@ const DashBoardBuyer = () => {
     queryKey: ["pending", Quser?.email],
     queryFn: async () => {
       const response = await axios.get(
-        `http://localhost:5000/submissions?Buyer_email=${Quser.email}&status=pending`,
+        `https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions?Buyer_email=${Quser.email}&status=pending`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -38,7 +38,7 @@ const DashBoardBuyer = () => {
   const approveSubmission = useMutation({
     mutationFn: async (submissionId) => {
       await axios.patch(
-        `http://localhost:5000/submissions/${submissionId}`,
+        `https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions/${submissionId}`,
         {status:'approve'},
         {
           headers: {
@@ -63,7 +63,7 @@ const DashBoardBuyer = () => {
   const rejectSubmission = useMutation({
     mutationFn: async (submissionId) => {
       await axios.patch(
-        `http://localhost:5000/submissions/${submissionId}`,
+        `https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions/${submissionId}`,
         {status:'reject'},
         {
           headers: {

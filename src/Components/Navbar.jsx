@@ -14,7 +14,7 @@ const Navbar = () => {
 
     const fetchUserByEmail = async ({ queryKey }) => {
         const [_, email] = queryKey;
-        const response = await axios.get(`http://localhost:5000/users?email=${email}`);
+        const response = await axios.get(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${email}`);
         return response.data;
     };
 
