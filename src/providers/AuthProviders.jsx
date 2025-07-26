@@ -10,89 +10,73 @@ import {
   updateProfile,
 } from "firebase/auth";
 import app from "../Firebase/firebase.config";
-import axios from 'axios';
-import {doc,setDoc,getDoc,getFirestore} from 'firebase/firestore';
-import { Firestore } from "firebase/firestore";
+import axios from "axios";
+import useAxiosPublic from "../hooks/useAxiosPublic";
+
 export const AuthContext = createContext();
 const AuthProviders = ({ children }) => {
   const auth = getAuth(app);
-  // User saving 
-  const [Quser,setUser] = useState(null);
 
-  // loading while user isn't fetch yet
-  const [loading,setLoading]=useState(true);
-
-//   Register New User 
+  const [Quser, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const axiosPublic = useAxiosPublic();
 
   const createNewUser = (data) => {
-     const {email, Name, photo, password}=data;
-     console.log("register new user",Name);
-     return createUserWithEmailAndPassword(auth, email, password).then(
-       (result) => {
-         const user = result.user;
-         return updateProfile(user, {
-           displayName: Name,
-           photoURL: photo,
-         }).then(()=>result);
-       }
-     );
-   };
-
-  // login Funtion
-
-  const userLogin = (data)=>{
-    const {email,password}=data;
-    return signInWithEmailAndPassword(auth,email,password)
-    .then(result=>result);
-  }
-
-  // Login With Google
-  const GoogleProvider = new GoogleAuthProvider;
-
-  const GoogleLogin = ()=>{
-    return signInWithPopup(auth,GoogleProvider)
-    .then(res=>res)
-    .catch(err=>
-      {console.log('error',err.message);}
-    )
-  }
-
-  // Logout Functionality
-
-  const Logout=()=>{
-    return signOut(auth).then(res=>res);
-  }
-
-
-
-
-
-  // 
-  useEffect(()=>{
-    const Unsubsribe = onAuthStateChanged(auth,async (currentUser)=>{
-      setUser(currentUser);
-      
-      if(currentUser?.email){
-        
-        const user = {email:currentUser?.email};
-        axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/login',user,{withCredentials:true})
-      .then(res=>{res.data})
+    const { email, Name, photo, password } = data;
+    return createUserWithEmailAndPassword(auth, email, password).then(
+      (result) => {
+        const user = result.user;
+        return updateProfile(user, {
+          displayName: Name,
+          photoURL: photo,
+        }).then(() => result);
       }
-      else{
-        axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/logout',{},{withCredentials:true})
-      .then(res=>{res.data})
+    );
+  };
+
+  const userLogin = (data) => {
+    const { email, password } = data;
+    return signInWithEmailAndPassword(auth, email, password).then(
+      (result) => result
+    );
+  };
+
+  const GoogleProvider = new GoogleAuthProvider();
+
+  const GoogleLogin = () => {
+    return signInWithPopup(auth, GoogleProvider)
+      .then((res) => res)
+      .catch((err) => {
+        console.log("error", err.message);
+      });
+  };
+
+  const Logout = () => {
+    return signOut(auth).then((res) => res);
+  };
+
+  useEffect(() => {
+    const Unsubsribe = onAuthStateChanged(auth, async (currentUser) => {
+      setUser(currentUser);
+
+      if (currentUser?.email) {
+        const user = { email: currentUser?.email };
+        axiosPublic.post("/jwt", user).then((res) => {
+          if (res?.data?.token) {
+            localStorage.setItem("access-token", res.data.token);
+          }
+        });
+      } else {
+        localStorage.removeItem("access-token");
       }
       setLoading(false);
+    });
+    return () => {
+      Unsubsribe();
+    };
+  }, []);
 
-    })
-    return ()=>{
-      Unsubsribe(); 
-    }
-  },[])
-
-
-
-//   All Funtion keeping in here to provide them one at a time
+  //   All Funtion keeping in here to provide them one at a time
   const AuthInfo = {
     createNewUser,
     userLogin,
@@ -101,11 +85,11 @@ const AuthProviders = ({ children }) => {
     Quser,
     loading,
     setLoading,
-    Logout
-  }
-  return <AuthContext.Provider value={AuthInfo}>{children}</AuthContext.Provider>;
+    Logout,
+  };
+  return (
+    <AuthContext.Provider value={AuthInfo}>{children}</AuthContext.Provider>
+  );
 };
-  
-
 
 export default AuthProviders;

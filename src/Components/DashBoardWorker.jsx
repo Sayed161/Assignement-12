@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../Providers/AuthProviders'; // Assuming you have an auth context
 import axios from 'axios';
+import useAxiosSecure from '../hooks/useAxiosSecure';
 
 const DashBoardWorker = () => {
   // States for dashboard statistics
@@ -15,7 +16,8 @@ const DashBoardWorker = () => {
 
   const { Quser } = useContext(AuthContext);
     const email = Quser?.email; // Get authenticated user from your auth context
-
+const token = localStorage.getItem("access-token");
+    const axiosSecure = useAxiosSecure();
   // Fetch dashboard data
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -23,13 +25,15 @@ const DashBoardWorker = () => {
         if (!Quser?.email) return;
 
         setLoading(true);
-        const response = await axios.get(
-          `https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions?worker_email=${Quser.email}`
+        const response = await axiosSecure.get(
+          `/submissions?worker_email=${Quser.email}`,{
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
         );
 
-  
-
-        const data = response.data.data;
+        const data = response.data.result;
         console.log("data.",data);
         // Calculate dashboard statistics
         const total = data.length;

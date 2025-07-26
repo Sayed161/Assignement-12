@@ -4,13 +4,15 @@ import axios from "axios";
 import { LuCheck, LuX, LuEye, LuLoader } from "react-icons/lu";
 import Swal from "sweetalert2";
 import { AuthContext } from "../Providers/AuthProviders";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const DashBoardBuyer = () => {
   const queryClient = useQueryClient();
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { Quser } = useContext(AuthContext);
-
+  const axiosSecure = useAxiosSecure();
+  const token = localStorage.getItem("access-token");
   // Fetch pending submissions
   const {
     data: submissions,
@@ -20,15 +22,16 @@ const DashBoardBuyer = () => {
   } = useQuery({
     queryKey: ["pending", Quser?.email],
     queryFn: async () => {
-      const response = await axios.get(
-        `https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions?Buyer_email=${Quser.email}&status=pending`,
+      const response = await axiosSecure.get(
+        `/submissions?Buyer_email=${Quser.email}&status=pending`,
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log("Fetched submissions:", response.data.result); // <-- Add this
+      console.log("Fetched submissions:", response.data.result); 
+
       return response.data.result;
     },
     enabled: !!Quser?.email, // Only run query if email exists
@@ -37,12 +40,12 @@ const DashBoardBuyer = () => {
   // Approve submission mutation
   const approveSubmission = useMutation({
     mutationFn: async (submissionId) => {
-      await axios.patch(
-        `https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions/${submissionId}`,
+      await axiosSecure.patch(
+        `/submissions/${submissionId}`,
         {status:'approve'},
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -62,12 +65,12 @@ const DashBoardBuyer = () => {
   // Reject submission mutation
   const rejectSubmission = useMutation({
     mutationFn: async (submissionId) => {
-      await axios.patch(
-        `https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions/${submissionId}`,
+      await axiosSecure.patch(
+        `/submissions/${submissionId}`,
         {status:'reject'},
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -208,12 +211,12 @@ const DashBoardBuyer = () => {
                             submission.worker?.photoURL ||
                             "https://via.placeholder.com/40"
                           }
-                          alt={submission.worker?.displayName}
+                          alt={submission.worker?.worker_name}
                         />
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium">
-                          {submission.worker?.displayName || "Unknown Worker"}
+                          {submission?.submissionData?.worker_name || "Unknown Worker"}
                         </div>
                         <div className="text-xs text-gray-400">
                           {submission.worker?.email ||
@@ -280,7 +283,7 @@ const DashBoardBuyer = () => {
           <div className="bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] p-6 rounded-lg max-w-2xl w-full border border-white/10">
             <div className="flex justify-between items-start mb-4">
               <h2 className="text-2xl font-bold">
-                {selectedSubmission.task?.task_title ||
+                {selectedSubmission.submissionData?.task_title ||
                   selectedSubmission.submissionData?.task_title}
               </h2>
               <button
@@ -295,7 +298,7 @@ const DashBoardBuyer = () => {
               <div>
                 <h3 className="text-sm font-medium text-gray-400">Worker</h3>
                 <p className="text-white">
-                  {selectedSubmission.worker?.displayName || "Unknown Worker"}
+                  {selectedSubmission.submissionData?.worker_name || "Unknown Worker"}
                 </p>
               </div>
               <div>
@@ -312,7 +315,7 @@ const DashBoardBuyer = () => {
                 </h3>
                 <p className="text-white">
                   {new Date(
-                    selectedSubmission.current_date ||
+                    selectedSubmission.submissionData.current_date ||
                       selectedSubmission.submittedAt
                   ).toLocaleString()}
                 </p>
@@ -330,7 +333,7 @@ const DashBoardBuyer = () => {
                 Submission Details
               </h3>
               <p className="text-white">
-                {selectedSubmission.submissionData?.submission_info ||
+                {selectedSubmission.submissionData?.submission_details ||
                   "No details provided"}
               </p>
             </div>

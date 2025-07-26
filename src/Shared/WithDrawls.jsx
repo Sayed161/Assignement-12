@@ -5,6 +5,7 @@ import { AuthContext } from "../Providers/AuthProviders";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "axios";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const WithDrawls = () => {
   const { Quser } = useContext(AuthContext);
@@ -21,13 +22,17 @@ const WithDrawls = () => {
   const elements = useElements();
 const [user, setUser] = useState(null);
   // Fetch user's total coins
-
+   const axiosSecure = useAxiosSecure();
   useEffect(() => {
     const fetchUser = async () => {
       try {
         if (!email) return;
-        
-        const response = await axios.get(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${email}`);
+        const token = localStorage.getItem("access-token");
+        const response = await axiosSecure.get(`/users?email=${email}`, {
+          headers: {
+             Authorization: `Bearer ${token}`,
+          },
+        });
         setUser(response.data);
         setTotalCoins(response.data.balance);
         setLoading(false);
@@ -87,16 +92,27 @@ const handleWithdrawalSubmit = async (e) => {
         return;
       }
       else{
-        console.log("paymentMethod",paymentMethod);
-      const response = await axios.post('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/create-payment-intent', {
+       
+const token = localStorage.getItem("access-token");
+      const response = await axiosSecure.post('/create-payment-intent', {
         price: withdrawalData.withdrawAmount,
         email: Quser.email,
         userId: user._id,
+      },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+    
       });
-     
+      console.log("paymentMethod",response);
       if (response.data) {
-        await axios.patch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${email}`, {
+        await axiosSecure.patch(`/users?email=${email}`,{
           balance: user.balance-withdrawalData.coinToWithdraw 
+        },{
+          headers: {
+              Authorization: `Bearer ${token}`,
+          }
         });
         Swal.fire({
                 title: 'Payment Successful!',
@@ -110,7 +126,7 @@ const handleWithdrawalSubmit = async (e) => {
    
       // if (paymentIntent.status === "succeeded") {
       //   const withdrawalResponse = await fetch(
-      //     "https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/withdrawals",
+      //     "http://localhost:5000/withdrawals",
       //     {
       //       method: "POST",
       //       headers: {

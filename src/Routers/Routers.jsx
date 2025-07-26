@@ -16,73 +16,94 @@ import TaskList from "../Components/TaskList";
 import Submission from "../Shared/Submission";
 import WithDrawls from "../Shared/WithDrawls";
 import TaskDetails from "../Components/TaskDetails";
+import DashboardAdmin from "../Admin/DashboardAdmin";
 
+import AdminHome from "../Admin/AdminHome";
+import ManageTask from "../Admin/ManageTask";
+import UserMangement from "../Admin/UserMangement";
 
 
 export const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <HomeLayout/>,
-      children:[
-        {
-          path:"signIn",
-          element:<Login></Login>
-        },
-        {
-          path:"signup",
-          element:<SignUp></SignUp>
-        },
-        {
-          path:"/",
-          element:<AuthLayout/>,
-          
-        },
-        {
-          path:"addtask",
-          element:<AddTask/>
-        },
-        {  
-          path:"mytasks",
-          element:<MyTasks/>
-        },
-        {
-          path:"dashboard-buyer",
-          element:<DashBoardBuyer/>
-        },
-        {
-          path:"dashboard-worker",
-          element:<DashboardWorker/>
-        },
-        {
-          path:"purchase",
-          element:<Purchase/>
-        },
-        {
-          path:"payments",
-          element:<PaymentHistory/>
-        },
-        {
-          path:"tasklist",
-          element:<TaskList/>
-        },
-        {
-          path:"tasklist/:id",
-          element:<TaskDetails/>,
-          loader: ({params}) => fetch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks/${params.id}`)
-        },
-        {
-          path:"submissions",
-          element:<Submission/>
-        },
-        {
-          path:"withdrawals",
-          element:<WithDrawls/>
-        }
-      ]
-    },
-    {
-          path:"*",
-          element: <h1 className="text-5xl text-center font-extrabold">Not Found 404</h1>
+  {
+    path: "/",
+    element: <HomeLayout />,
+    children: [
+      {
+        path: "signIn",
+        element: <Login></Login>,
       },
-  ]);
-
+      {
+        path: "signup",
+        element: <SignUp></SignUp>,
+      },
+      {
+        path: "/",
+        element: <AuthLayout />,
+      },
+      {
+        path: "addtask",
+        element: <AddTask />,
+      },
+      {
+        path: "mytasks",
+        element: <MyTasks />,
+      },
+      {
+        path: "dashboard-buyer",
+        element: <DashBoardBuyer />,
+      },
+      {
+        path: "dashboard-worker",
+        element: <DashboardWorker />,
+      },
+      {
+        path: "purchase",
+        element: <Purchase />,
+      },
+      {
+        path: "payments",
+        element: <PaymentHistory />,
+      },
+      {
+        path: "tasklist",
+        element: <TaskList />,
+      },
+      {
+        path: "tasklist/:id",
+        element: <TaskDetails />,
+      },
+      {
+        path: "submissions",
+        element: <Submission />,
+      },
+      {
+        path: "withdrawals",
+        element: <WithDrawls />,
+      },
+    ],
+  },
+  {
+    path: "admin-dashboard",
+    element: <DashboardAdmin></DashboardAdmin>,
+    children: [ 
+      {
+        path: "/admin-dashboard",
+        element: <AdminHome />,
+      },
+      {
+        path:"/admin-dashboard/tasks",
+        element:<ManageTask/>
+      },
+      {
+        path:"/admin-dashboard/users",
+        element:<UserMangement />
+      }
+    ],
+  },
+  {
+    path: "*",
+    element: (
+      <h1 className="text-5xl text-center font-extrabold">Not Found 404</h1>
+    ),
+  },
+]);

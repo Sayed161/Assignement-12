@@ -1,22 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { LuClipboardList, LuCalendar, LuUser, LuDollarSign, LuArrowRight } from "react-icons/lu";
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import Swal from 'sweetalert2';
+import {
+  LuClipboardList,
+  LuCalendar,
+  LuUser,
+  LuDollarSign,
+  LuArrowRight,
+} from "react-icons/lu";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import { Link } from "react-router-dom";
 
 const ListTasks = () => {
+  const axiosSecure = useAxiosSecure();
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks');
+      const token = localStorage.getItem("access-token");
+      const response = await axiosSecure.get("/tasks", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return response.data;
     } catch (error) {
-      throw new Error('Failed to fetch tasks');
+      throw new Error("Failed to fetch tasks");
     }
   };
 
-  const { data: tasks, isLoading, isError } = useQuery({
-    queryKey: ['tasks'],
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["tasks"],
     queryFn: fetchTasks,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -43,15 +61,15 @@ const ListTasks = () => {
       title: "Error!",
       text: "Failed to load tasks",
       icon: "error",
-      background: '#1a1a2e',
-      color: '#fff'
+      background: "#1a1a2e",
+      color: "#fff",
     });
     return (
       <section className="min-h-screen p-6 relative overflow-hidden bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]">
         <div className="relative container mx-auto max-w-6xl z-10 flex justify-center items-center h-screen">
           <div className="text-center">
             <h2 className="text-2xl text-red-400 mb-4">Error loading tasks</h2>
-            <button 
+            <button
               onClick={() => window.location.reload()}
               className="px-6 py-3 rounded-lg bg-gradient-to-r from-[#00E1F9] to-[#6A1B70] text-white"
             >
@@ -72,7 +90,7 @@ const ListTasks = () => {
 
       <div className="relative container mx-auto max-w-6xl z-10">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -108,12 +126,16 @@ const ListTasks = () => {
               {/* Task Content */}
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-bold text-white">{task.task?.task_title}</h3>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    task.task?.status === 'active' 
-                      ? 'bg-green-500/20 text-green-400' 
-                      : 'bg-red-500/20 text-red-400'
-                  }`}>
+                  <h3 className="text-xl font-bold text-white">
+                    {task.task?.task_title}
+                  </h3>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      task.task?.status === "active"
+                        ? "bg-green-500/20 text-green-400"
+                        : "bg-red-500/20 text-red-400"
+                    }`}
+                  >
                     {task.task?.status}
                   </span>
                 </div>
@@ -136,19 +158,28 @@ const ListTasks = () => {
                   </div>
                   <div className="flex items-center text-gray-400">
                     <LuCalendar className="mr-2" />
-                    <span>Due: {new Date(task.task?.completion_date).toLocaleDateString()}</span>
+                    <span>
+                      Due:{" "}
+                      {new Date(
+                        task.task?.completion_date
+                      ).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
 
                 {/* Action Button */}
+                <Link to={`/tasklist/${task?._id}`}>
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   className="w-full px-4 py-3 font-medium rounded-lg bg-gradient-to-r from-[#00E1F9] to-[#6A1B70] hover:from-[#6A1B70] hover:to-[#00E1F9] transition-all flex items-center justify-center gap-2"
                 >
-                  <span>View Details</span>
+                <span>View Details</span>
+                
+
                   <LuArrowRight />
                 </motion.button>
+                </Link>
               </div>
             </motion.div>
           ))}
@@ -163,28 +194,28 @@ const ListTasks = () => {
             initial={{
               x: Math.random() * 100,
               y: Math.random() * 100,
-              opacity: 0
+              opacity: 0,
             }}
             animate={{
               x: [null, Math.random() * 100 - 50],
               y: [null, Math.random() * 100 - 50],
-              opacity: [0, 0.5, 0]
+              opacity: [0, 0.5, 0],
             }}
             transition={{
               duration: Math.random() * 10 + 10,
               repeat: Infinity,
-              repeatType: "reverse"
+              repeatType: "reverse",
             }}
             className="absolute w-1 h-1 rounded-full bg-[#00E1F9]"
             style={{
               left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`
+              top: `${Math.random() * 100}%`,
             }}
           />
         ))}
       </div>
     </section>
-  )
-}
+  );
+};
 
 export default ListTasks;

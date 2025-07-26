@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from "framer-motion";
 import { LuCrown , LuCoins , LuChevronRight } from "react-icons/lu";
+import useAxiosPublic from '../hooks/useAxiosPublic';
+import useAxiosSecure from '../hooks/useAxiosSecure';
 const BestWorkers = () => {
   const [topWorkers, setTopWorkers] = useState([]);
-
-  useEffect(() => {
+  const axiosSecure = useAxiosSecure();
+const token = localStorage.getItem("access-token");
+ console.log("Token - ",token);
+ useEffect(() => {
     const fetchTopWorkers = async () => {
       try {
-        const response = await fetch('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users'); // Replace with your actual API endpoint
-        const data = await response.json();
+        const response = await axiosSecure.get('/users', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        // Sort by balance descending and pick top 6
+        const data = response.data;
+        console.log("Best worker data",data);
         const sorted = data
-          .filter(user => user.role === 'Worker') // Optional: filter only workers
+          .filter(user => user.role === 'Worker')
           .sort((a, b) => b.balance - a.balance)
           .slice(0, 6);
 
@@ -23,12 +31,11 @@ const BestWorkers = () => {
     };
 
     fetchTopWorkers();
-  }, []);
+  }, [axiosSecure, token]);
 
   return (
     <section className="py-16 bg-gradient-to-b from-[#0f0c29] to-[#302b63]">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -44,11 +51,10 @@ const BestWorkers = () => {
           </p>
         </motion.div>
 
-        {/* Workers Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
            {topWorkers.map((worker, index) => (
             <motion.div
-              key={worker.id}
+              key={worker._id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
@@ -59,8 +65,8 @@ const BestWorkers = () => {
                 {/* Worker Avatar with Rank Badge */}
                 <div className="relative">
                   <img 
-                    src={worker.avatar} 
-                    alt={worker.name}
+                    src={worker?.photo} 
+                    alt={worker?.Name}
                     className="w-16 h-16 rounded-full border-2 border-[#00E1F9] object-cover"
                   />
                   {index === 0 && (
@@ -69,17 +75,15 @@ const BestWorkers = () => {
                     </div>
                   )}
                 </div>
-
-                {/* Worker Info */}
+\
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-white">{worker.name}</h3>
+                  <h3 className="text-lg font-semibold text-white">{worker.Name}</h3>
                   <div className="flex items-center text-[#00E1F9] mt-1">
                     <LuCoins className="mr-1" />
-                    <span className="font-mono">{worker.balance?.toLocaleString()} coins</span>
+                    <span className="font-mono">{worker?.balance?.toLocaleString()} coins</span>
                   </div>
                 </div>
 
-                {/* Rank Indicator */}
                 <div className={`text-sm font-bold px-3 py-1 rounded-full ${
                   index === 0 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-900' : 
                   index === 1 ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-gray-900' : 
@@ -90,7 +94,6 @@ const BestWorkers = () => {
                 </div>
               </div>
 
-              {/* Progress Bar */}
               <div className="mt-4">
                 <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
                   <motion.div

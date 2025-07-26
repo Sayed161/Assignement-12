@@ -21,7 +21,7 @@ const MyTasks = () => {
       try {
         if (!email) return; // Don't fetch if no email
         
-        const response = await axios.get(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks?email=${email}`);
+        const response = await axios.get(`http://localhost:5000/tasks?email=${email}`);
         setTasks(response.data);
         console.log("data",response.data);
         setLoading(false);
@@ -54,7 +54,7 @@ const MyTasks = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks/${taskId}`);
+        await axios.delete(`http://localhost:5000/tasks/${taskId}`);
         setTasks(tasks.filter(task => task._id !== taskId));
         Swal.fire(
           'Deleted!',

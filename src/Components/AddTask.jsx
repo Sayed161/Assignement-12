@@ -3,11 +3,13 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Providers/AuthProviders";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const AddTask = () => {
   const navigate = useNavigate();
   const { Quser } = useContext(AuthContext);
-
+  const token = localStorage.getItem("access-token");
+  const axiosSecure = useAxiosSecure();
   const [taskData, setTaskData] = useState({
     task_title: "",
     task_detail: "",
@@ -42,8 +44,12 @@ const AddTask = () => {
   // Fetch user balance
   useEffect(() => {
     if (Quser?.email) {
-      axios
-        .get(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${Quser.email}`)
+      axiosSecure
+        .get(`/users?email=${Quser.email}`,{
+            headers:{
+               authorization: `Bearer ${token}`,
+            }
+    })
         .then((res) => {
           const balance = res.data?.balance || 0;
           setUserBalance(balance);
@@ -100,14 +106,22 @@ const AddTask = () => {
       };
 
       // Create task and deduct balance
-      const response = await axios.post("https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/tasks", {
+      const response = await axiosSecure.post("/tasks", {
         task: fullTaskData,
         userId: Quser.uid,
         amount: totalCost,
+      },{
+            headers:{
+               authorization: `Bearer ${token}`,
+            }
       });
-      await axios.patch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${Quser.email}`, {
+      await axiosSecure.patch(`/users?email=${Quser.email}`, {
         balance: userBalance - totalCost,
-      });
+      },{
+            headers:{
+               authorization: `Bearer ${token}`,
+            }
+    });
       Swal.fire({
         title: "Success!",
         text: `Task created successfully! $${totalCost.toFixed(

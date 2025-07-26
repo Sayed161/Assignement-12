@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { AuthContext } from '../Providers/AuthProviders';
+import useAxiosSecure from '../hooks/useAxiosSecure';
 
 const PaymentHistory = () => {
   const [payments, setPayments] = useState([]);
@@ -8,14 +9,18 @@ const PaymentHistory = () => {
   const [error, setError] = useState(null);
     const { Quser } = useContext(AuthContext);
       const email = Quser?.email;
+      const axiosSecure = useAxiosSecure();
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const response = await fetch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/checkout?email=${email}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch payment history');
-        }
-        const data = await response.json();
+        const token = localStorage.getItem("access-token");
+        const response = await axiosSecure.get(`/checkout?email=${email}`,{
+          headers:{
+            Authorization:`Bear ${token}`
+          }
+        });
+        const data = await response.data;
+        console.log("Payment hisotory",data);
         setPayments(data);
       } catch (err) {
         setError(err.message);

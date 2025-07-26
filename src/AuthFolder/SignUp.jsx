@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { AuthContext } from "../Providers/AuthProviders";
 import { FaGoogle, FaEnvelope, FaLock, FaUser, FaImage, FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const SignUp = () => {
   const { createNewUser, setUser, setLoading } = useContext(AuthContext);
@@ -13,11 +14,14 @@ const SignUp = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
   const handleSignUp = (data) => {
+    
+    data.role = 'Admin';
     console.log("All the data from new user to create", data);
+
     createNewUser(data).then((result) => {
       const user = result.user;
       setUser(user);
@@ -25,21 +29,18 @@ const SignUp = () => {
       let balance = 0;
       if (data.role === "Worker") {
         balance = 10;
-      } else {
+      } else if(data.role === "Buyer") {
         balance = 50;
+      }
+      else{
+        balance=0;
       }
       const { password, ...rest } = data;
       const userData = {
         ...rest,
         balance: balance,
       };
-      fetch('https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      }).then(res => res.json());
+      axiosSecure.post('http://localhost:5000/users',userData).then(res => res.data);
 
       Swal.fire({
         title: "Registration Successful!",
@@ -50,7 +51,13 @@ const SignUp = () => {
         color: '#fff'
       });
       setTimeout(() => {
-        navigate("/");
+        if (data.role === "Admin") {
+        navigate("/admin-dashboard");
+      } 
+      else{
+        navigate('/')
+      }
+       
       }, 1500);
     });
   };

@@ -1,44 +1,83 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { AuthContext } from "../Providers/AuthProviders";
 import { FaGoogle, FaEnvelope, FaLock, FaArrowRight } from "react-icons/fa";
 import { motion } from "framer-motion";
-
+import useAxiosSecure from "../hooks/useAxiosSecure";
+import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 const Login = () => {
-  const { userLogin, GoogleLogin, setUser, setLoading } = useContext(AuthContext);
+  const { userLogin, GoogleLogin, setUser, setLoading,Quser } = useContext(AuthContext);
   const navigate = useNavigate();
-  
-  // Using an SVG illustration URL from Undraw
-  const loginIllustrationUrl = "https://assets5.lottiefiles.com/packages/lf20_jcikwtux.json";
-
+  const queryClient = useQueryClient();
+  const axiosSecure = useAxiosSecure();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+const fetchUserByEmail = async ({ queryKey }) => {
+  const [_, email] = queryKey;
+  try {
+    // Get fresh token each time in case it was updated
+    const token = localStorage.getItem('access-token');
+    if (!token) {
+      throw new Error('No access token found');
+    }
 
-  const handleGoogleLogin = () => {
-    GoogleLogin().then(res => {
-      const user = res.user;
-      setUser(user);
-      setLoading(false);
-      showSuccessAlert();
+    const response = await axiosSecure.get(`/users?email=${email}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-  };
+    return response.data;
+  } catch (error) {
+    console.error('API Error:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to fetch user data');
+  }
+};
 
-  const handleLogin = (data) => {
-    userLogin(data).then(res => {
-      const user = res.user;
-      setUser(user);
-      setLoading(false);
-      showSuccessAlert();
-    });
-  };
-
-  const showSuccessAlert = () => {
-    Swal.fire({
+  const { data: userData, isError: userDataError } = useQuery({
+    queryKey: ['user', Quser?.email],
+    queryFn: fetchUserByEmail,
+    enabled: !!Quser?.email,
+    staleTime: 5 * 60 * 1000
+  });
+const handleGoogleLogin = async () => {
+  try {
+    setLoading(true);
+    const result = await GoogleLogin();
+    const user = result.user;
+    setUser(user);
+    showSuccessAlert(user);  // Pass the user object
+  } catch (error) {
+    showErrorAlert(error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+const handleLogin = async (data) => {
+  try {
+    setLoading(true);
+    console.log('Attempting login...');
+    
+    const result = await userLogin(data);
+    const user = result.user;
+    setUser(user);
+    
+    console.log('Login successful, token:', localStorage.getItem('access-token'));
+    showSuccessAlert(user);
+  } catch (error) {
+    console.error('Login error:', error);
+    showErrorAlert(error.message || 'Login failed. Please check your credentials.');
+  } finally {
+    setLoading(false);
+  }
+};const showSuccessAlert = async (user) => {
+  try {
+    await Swal.fire({
       title: "Login Successful!",
       icon: "success",
       showConfirmButton: false,
@@ -46,8 +85,40 @@ const Login = () => {
       background: '#1a1a2e',
       color: '#fff'
     });
-    setTimeout(() => navigate("/"), 1500);
+
+    // Try to get user data, but don't fail if we can't
+    let userData;
+    try {
+      userData = await queryClient.fetchQuery({
+        queryKey: ['user', user?.email],
+        queryFn: () => fetchUserByEmail({ queryKey: ['user', user?.email] }),
+        staleTime: 5 * 60 * 1000
+      });
+      console.log("User data", userData);
+    } catch (fetchError) {
+      console.warn("Couldn't fetch user details, using basic info", fetchError);
+      userData = { email: user.email }; // fallback
+    }
+
+    // Redirect based on available data
+    navigate(userData?.role === 'Admin' ? '/admin-dashboard' : '/');
+  } catch (error) {
+    console.error("Error in success flow:", error);
+    navigate('/');
+  }
+};
+  // Show error alert
+  const showErrorAlert = (message) => {
+    Swal.fire({
+      title: "Error!",
+      text: message,
+      icon: "error",
+      background: '#1a1a2e',
+      color: '#fff'
+    });
   };
+
+  
 
   return (
     <section className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e]">

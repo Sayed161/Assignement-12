@@ -7,14 +7,21 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { motion } from "framer-motion";
 import { BiSolidDashboard } from "react-icons/bi";
+import useAxiosPublic from "../hooks/useAxiosPublic";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 const Navbar = () => {
     const { Quser, Logout } = useContext(AuthContext);
     const location = useLocation();
     const navigate = useNavigate();
-
+    const token = localStorage.getItem("access-token");
+    const axiosSecure = useAxiosSecure();
     const fetchUserByEmail = async ({ queryKey }) => {
         const [_, email] = queryKey;
-        const response = await axios.get(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/users?email=${email}`);
+        const response = await axiosSecure.get(`/users?email=${email}`, {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        });
         return response.data;
     };
 

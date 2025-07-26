@@ -3,23 +3,26 @@ import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../Providers/AuthProviders';
+import useAxiosSecure from '../hooks/useAxiosSecure';
 
 const Submission = () => {
     const { Quser } = useContext(AuthContext);
     const [submissions, setSubmissions] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const axiosSecure = useAxiosSecure();
     useEffect(() => {
         const fetchSubmissions = async () => {
-            try {
-                const response = await fetch(`https://taskhubserver-efojey2sb-sheikh-sayeds-projects.vercel.app/submissions?worker_email=${Quser?.email}`, {
+            try 
+            {
+                const token = localStorage.getItem("access-token");
+                const response = await axiosSecure.get(`/submissions?worker_email=${Quser?.email}`, {
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                         Authorization: `Bearer ${token}`,
                     }
                 });
-                const data = await response.json();
-                if (data.success) {
-                    setSubmissions(data.data);
+                const data = await response.data;
+                if (data) {
+                    setSubmissions(data.result);
                 } else {
                     toast.error(data.message || 'Failed to fetch submissions');
                 }
