@@ -51,18 +51,18 @@ const Submission = () => {
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/10"
+                    className="bg-white/10 backdrop-blur-sm rounded-xl p-4 lg:p-8 border border-white/10 "
                 >
-                    <div className="flex justify-between items-center mb-8">
+                    <div className="relative lg:flex justify-between items-center mb-8 ">
                         <motion.h1 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.2 }}
-                            className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E1F9] to-[#6A1B70]"
+                            className="text-xl lg:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#00E1F9] to-[#6A1B70] pb-3 lg:pb-0"
                         >
                             My Submissions
                         </motion.h1>
-                        <p className="text-[#00E1F9]">{submissions.length} submissions found</p>
+                        <p className="text-[#00E1F9] text-sm lg:text-2xl">{submissions.length} submissions found</p>
                     </div>
 
                     {loading ? (
@@ -92,7 +92,7 @@ const Submission = () => {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: index * 0.1 }}
-                                    className="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-[#00E1F9]/30 transition-all"
+                                    className="bg-white/5 rounded-xl p-3 lg:p-6 border border-white/10 hover:border-[#00E1F9]/30 transition-all"
                                 >
                                     <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
                                         <div>

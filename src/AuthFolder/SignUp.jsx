@@ -40,7 +40,7 @@ const SignUp = () => {
         ...rest,
         balance: balance,
       };
-      axiosSecure.post('http://localhost:5000/users',userData).then(res => res.data);
+      axiosSecure.post('https://taskhubserverside.onrender.com/users',userData).then(res => res.data);
 
       Swal.fire({
         title: "Registration Successful!",

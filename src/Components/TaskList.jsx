@@ -20,6 +20,7 @@ const TaskList = () => {
       });
 
       const data = response.data; 
+      console.log("data is response",data);
       setTasks(data);
     } catch (err) {
       console.error("Error fetching tasks:", err);
@@ -125,22 +126,22 @@ const TaskList = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <img
-                          src={task?.created_by?.photoURL}
-                          alt={task?.created_by?.displayName}
+                          src={taskItem?.created_by?.photoURL}
+                          alt={taskItem?.created_by?.displayName}
                           className="w-8 h-8 rounded-full"
                         />
                         <span className="text-sm">
-                          {task?.created_by?.displayName}
+                          {taskItem?.created_by?.displayName}
                         </span>
                       </div>
                       <span
                         className={`px-3 py-1 rounded-full text-xs ${
-                          task?.status === "active"
+                          taskItem.status === "active"
                             ? "bg-green-900/50 text-green-300"
                             : "bg-yellow-900/50 text-yellow-300"
                         }`}
                       >
-                        {task?.status}
+                        {taskItem.status}
                       </span>
                     </div>
                   </motion.div>

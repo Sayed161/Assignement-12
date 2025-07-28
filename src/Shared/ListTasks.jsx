@@ -131,12 +131,12 @@ const ListTasks = () => {
                   </h3>
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      task.task?.status === "active"
+                      task?.status === "active"
                         ? "bg-green-500/20 text-green-400"
                         : "bg-red-500/20 text-red-400"
                     }`}
                   >
-                    {task.task?.status}
+                    {task?.status}
                   </span>
                 </div>
 
@@ -146,7 +146,7 @@ const ListTasks = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center text-gray-400">
                     <LuUser className="mr-2" />
-                    <span>Posted by: {task.task?.created_by?.displayName}</span>
+                    <span>Posted by: {task?.created_by?.displayName}</span>
                   </div>
                   <div className="flex items-center text-gray-400">
                     <LuDollarSign className="mr-2" />

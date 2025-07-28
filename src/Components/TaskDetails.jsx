@@ -200,7 +200,7 @@ useEffect(() => {
                     <p>
                       Created on:{" "}
                       <span className="text-[#00E1F9]">
-                        {new Date(task?.task?.created_at).toLocaleDateString()}
+                        {new Date(task?.created_at).toLocaleDateString()}
                       </span>
                     </p>
                     <p>
@@ -264,8 +264,8 @@ useEffect(() => {
                 className="flex items-center space-x-4 mt-6 pt-6 border-t border-white/10"
               >
                 <img
-                  src={task?.task?.created_by?.photoURL}
-                  alt={task?.task?.created_by?.displayName}
+                  src={task?.created_by?.photoURL}
+                  alt={task?.created_by?.displayName}
                   className="w-12 h-12 rounded-full"
                 />
                 <div>

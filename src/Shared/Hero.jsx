@@ -83,38 +83,10 @@ const Hero = () => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Background Elements */}
+    
       <div className="absolute inset-0 opacity-20">
         <div className="absolute inset-0 bg-[url(https://grainy-gradients.vercel.app/noise.svg)] opacity-20"></div>
       </div>
-      
-      {/* Optimized Floating particles - reduced quantity */}
-      {[...Array(8)].map((_, i) => (
-        <motion.div
-          key={i}
-          initial={{
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            opacity: 0
-          }}
-          animate={{
-            x: [null, Math.random() * 100 - 50],
-            y: [null, Math.random() * 100 - 50],
-            opacity: [0, 0.6, 0]
-          }}
-          transition={{
-            duration: Math.random() * 15 + 10,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "linear"
-          }}
-          className="absolute w-1.5 h-1.5 rounded-full bg-[#00E1F9]"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`
-          }}
-        />
-      ))}
 
       <div className="container mx-auto px-4 relative z-10 h-full">
         <AnimatePresence custom={direction} initial={false}>

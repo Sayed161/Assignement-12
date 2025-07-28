@@ -11,11 +11,7 @@ const token = localStorage.getItem("access-token");
  useEffect(() => {
     const fetchTopWorkers = async () => {
       try {
-        const response = await axiosSecure.get('/users', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axiosSecure.get('/users');
 
         const data = response.data;
         console.log("Best worker data",data);

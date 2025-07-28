@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FiTrash2, FiEdit, FiAlertCircle } from 'react-icons/fi';
 import useAxiosSecure from '../hooks/useAxiosSecure';
+import Swal from 'sweetalert2';
 
 const ManageTask = () => {
   const [tasks, setTasks] = useState([]);
@@ -31,18 +32,49 @@ const ManageTask = () => {
     fetchTasks();
   }, []);
 
-  // Handle delete task
-  const handleDeleteTask = async (taskId) => {
-    if (window.confirm('Are you sure you want to delete this task?')) {
-      try {
-        // Replace with actual API call
-        console.log(`Deleting task with ID: ${taskId}`);
-        setTasks(tasks.filter(task => task._id !== taskId));
-      } catch (err) {
-        setError('Failed to delete task');
-      }
+ const handleDeleteTask = async (taskId) => {
+   const result = await Swal.fire({
+              title: "Are you sure?",
+              text: "You won't be able to revert this!",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#3085d6",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Yes, delete it!",
+              background: "#1a1a2e",
+              color: "#fff"
+            });
+      
+    if (result.isConfirmed) {
+    try {
+      
+      const token = localStorage.getItem("access-token");
+      await axiosSecure.delete(`/tasks/${taskId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    
+       Swal.fire({
+                title: "Deleted!",
+                text: "User has been deleted.",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false,
+                background: "#1a1a2e",
+                color: "#fff"
+              });
+            
+      setTasks(tasks.filter(task => task._id !== taskId));
+    } 
+  catch (err) {
+      setError(err.message);
+      console.error("Failed to delete task:", err);
     }
-  };
+  }
+}
+
+  
 
   // Status color mapping
   const getStatusColor = (status) => {
@@ -67,9 +99,6 @@ const ManageTask = () => {
 
       <div className="relative z-10">
         <motion.h1 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           className="text-3xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-[#00E1F9] to-[#6A1B70]"
         >
           Manage Tasks
@@ -77,8 +106,6 @@ const ManageTask = () => {
 
         {error && (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
             className="mb-6 p-2 bg-red-500/20 border border-red-500 rounded-lg flex items-center space-x-2"
           >
             <FiAlertCircle />
@@ -92,9 +119,6 @@ const ManageTask = () => {
           </div>
         ) : (
           <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
             className="bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm overflow-hidden"
           >
             <div className="overflow-x-auto">
@@ -128,7 +152,7 @@ const ManageTask = () => {
                           <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleDeleteTask(task.id)}
+                            onClick={() => handleDeleteTask(task._id)}
                             className="p-2 bg-red-500/20 rounded-lg text-red-400 hover:bg-red-500/30 transition-colors"
                             title="Delete Task"
                           >
@@ -151,32 +175,7 @@ const ManageTask = () => {
         )}
       </div>
 
-      {/* Floating particles */}
-      {[...Array(15)].map((_, i) => (
-        <motion.div
-          key={i}
-          initial={{
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            opacity: 0
-          }}
-          animate={{
-            x: [null, Math.random() * 100 - 50],
-            y: [null, Math.random() * 100 - 50],
-            opacity: [0, 0.3, 0]
-          }}
-          transition={{
-            duration: Math.random() * 15 + 10,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-          className="absolute w-1 h-1 rounded-full bg-[#00E1F9]"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`
-          }}
-        />
-      ))}
+   
     </div>
   );
 };

@@ -92,9 +92,13 @@ const AddTask = () => {
       }
 
       // Prepare task data
-      const fullTaskData = {
-        ...taskData,
-        total_cost: totalCost,
+     
+
+      // Create task and deduct balance
+      const response = await axiosSecure.post("/tasks", {
+        task: taskData,
+        userId: Quser.uid,
+        amount: totalCost,
         created_by: {
           uid: Quser.uid,
           displayName: Quser.displayName || "Anonymous",
@@ -103,13 +107,6 @@ const AddTask = () => {
         },
         created_at: new Date().toISOString(),
         status: "active",
-      };
-
-      // Create task and deduct balance
-      const response = await axiosSecure.post("/tasks", {
-        task: fullTaskData,
-        userId: Quser.uid,
-        amount: totalCost,
       },{
             headers:{
                authorization: `Bearer ${token}`,

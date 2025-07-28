@@ -98,6 +98,7 @@ const token = localStorage.getItem("access-token");
         price: withdrawalData.withdrawAmount,
         email: Quser.email,
         userId: user._id,
+        status: "pending",
       },
         {
           headers: {
@@ -106,63 +107,9 @@ const token = localStorage.getItem("access-token");
     
       });
       console.log("paymentMethod",response);
-      if (response.data) {
-        await axiosSecure.patch(`/users?email=${email}`,{
-          balance: user.balance-withdrawalData.coinToWithdraw 
-        },{
-          headers: {
-              Authorization: `Bearer ${token}`,
-          }
-        });
-        Swal.fire({
-                title: 'Payment Successful!',
-                text: `${withdrawalData.coinToWithdraw} coins have been added to your account`,
-                icon: 'success'
-                });
-      }
-     
- }
-
    
-      // if (paymentIntent.status === "succeeded") {
-      //   const withdrawalResponse = await fetch(
-      //     "http://localhost:5000/withdrawals",
-      //     {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-      //       },
-      //       body: JSON.stringify({
-      //         worker_email: Quser.email,
-      //         worker_name: Quser.displayName,
-      //         withdrawal_coin: withdrawalData.coinToWithdraw,
-      //         withdrawal_amount: withdrawalData.withdrawAmount,
-      //         payment_system: "Stripe", // Now using Stripe
-      //         account_number: paymentIntent.id, // Using payment intent ID as reference
-      //         withdraw_date: new Date().toISOString(),
-      //         status: "completed", // Mark as completed since payment succeeded
-      //         payment_intent_id: paymentIntent.id,
-      //       }),
-      //     }
-      //   );
-
-      //   const result = await withdrawalResponse.json();
-      //   if (result.success) {
-      //     toast.success("Withdrawal processed successfully!");
-      //     setTotalCoins(totalCoins - withdrawalData.coinToWithdraw);
-      //     setWithdrawalData({
-      //       coinToWithdraw: 0,
-      //       withdrawAmount: 0,
-      //       paymentSystem: "Stripe",
-      //       accountNumber: "",
-      //     });
-      //   } else {
-      //     toast.error(result.message || "Withdrawal record creation failed");
-      //   }
-      
-     
-  };
+    }
+  }
 
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-[#0f0c29] via-[#302b63] to-[#24243e] text-gray-300 min-h-screen p-12">
@@ -188,18 +135,18 @@ const token = localStorage.getItem("access-token");
             </div>
           ) : (
             <>
-              <div className="bg-white/5 p-6 rounded-lg mb-8">
+              <div className="bg-white/5 p-3 lg:p-6 rounded-lg mb-8">
                 <h2 className="text-xl font-semibold mb-4 text-[#00E1F9]">
                   Your Balance
                 </h2>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="flex gap-4 justify-center items-center">
                   <div>
                     <p className="text-gray-400">Total Coins</p>
-                    <p className="text-2xl font-bold">{totalCoins}</p>
+                    <p className="text-xl lg:text-2xl font-bold">{totalCoins}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Withdrawable Amount</p>
-                    <p className="text-2xl font-bold">
+                    <p className="text-gray-400 text-lg lg:text-xl">Withdrawable Amount</p>
+                    <p className="text-xl lg:text-2xl font-bold">
                       ${(totalCoins / 20).toFixed(2)}
                     </p>
                   </div>

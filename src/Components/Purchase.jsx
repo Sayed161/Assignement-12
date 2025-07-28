@@ -180,7 +180,7 @@ const Purchase = () => {
                 <div className="mt-4">
                   <button
                     onClick={() => handlePurchase(pkg)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    className="w-full bg-gradient-to-r from-[#00E1F9] to-[#6A1B70] text-white font-bold py-2 px-4 rounded"
                   >
                     Buy Now
                   </button>

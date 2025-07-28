@@ -21,7 +21,7 @@ const MyTasks = () => {
       try {
         if (!email) return; // Don't fetch if no email
         
-        const response = await axios.get(`http://localhost:5000/tasks?email=${email}`);
+        const response = await axios.get(`https://taskhubserverside.onrender.com/tasks?email=${email}`);
         setTasks(response.data);
         console.log("data",response.data);
         setLoading(false);
@@ -54,7 +54,7 @@ const MyTasks = () => {
 
     if (result.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:5000/tasks/${taskId}`);
+        await axios.delete(`https://taskhubserverside.onrender.com/tasks/${taskId}`);
         setTasks(tasks.filter(task => task._id !== taskId));
         Swal.fire(
           'Deleted!',
